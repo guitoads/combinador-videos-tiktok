@@ -1,0 +1,34 @@
+name: Build Combinador EXE
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "combinador_tiktokshop.py"
+      - "requirements-combinador.txt"
+      - ".github/workflows/build-combinador.yml"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: pip install -r requirements-combinador.txt
+
+      - name: Gerar executável
+        run: >
+          pyinstaller --onefile --windowed --name CombinadorPOV
+          --collect-all customtkinter
+          --collect-all imageio_ffmpeg
+          combinador_tiktokshop.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CombinadorPOV-windows
+          path: dist/CombinadorPOV.exe
